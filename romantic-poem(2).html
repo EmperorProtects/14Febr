@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Наша Встреча</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Crimson+Text:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: linear-gradient(to bottom, #0a0e27 0%, #1a1a3e 50%, #0f0c29 100%);
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 70vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Звездное небо */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Луна */
+        .moon {
+            position: fixed;
+            top: 10%;
+            right: 15%;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle at 30% 30%, #fffacd, #f0e68c);
+            border-radius: 50%;
+            box-shadow: 0 0 60px rgba(255, 250, 205, 0.5);
+            z-index: 1;
+            animation: moonFloat 8s ease-in-out infinite;
+        }
+
+        @keyframes moonFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Контейнер для стихов */
+        .poem-container {
+            position: relative;
+            z-index: 10;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 100px 40px;
+            min-height: 100vh;
+        }
+
+        .poem-line {
+            font-size: 2.2rem;
+            line-height: 1.8;
+            margin: 40px 0;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            text-align: center;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .poem-line.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .poem-line.dialogue {
+            font-style: italic;
+            color: #ffd9e8;
+            font-size: 1.9rem;
+            margin: 30px 0;
+        }
+
+        .poem-line.emphasis {
+            font-size: 2.5rem;
+            color: #ffb6d9;
+            font-weight: 600;
+        }
+
+        /* Плавающие фотографии */
+        .floating-photos {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .photo {
+            position: absolute;
+            width: 300px;
+            height: 500px;
+            background: linear-gradient(135deg, rgba(255, 182, 217, 0.2), rgba(255, 217, 232, 0.15));
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transform: scale(0.8) rotate(0deg);
+            transition: all 0.8s ease-out;
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .photo.show {
+            opacity: 1;
+            transform: scale(1) rotate(var(--rotate));
+        }
+
+        .photo:nth-child(1) { top: 15%; left: 10%; --rotate: -5deg; }
+        .photo:nth-child(2) { top: 25%; right: 8%; --rotate: 8deg; }
+        .photo:nth-child(3) { top: 55%; left: 15%; --rotate: -7deg; }
+        .photo:nth-child(4) { bottom: 10%; right: 12%; --rotate: 6deg; }
+        .photo:nth-child(5) { top: 70%; left: 8%; --rotate: -4deg; }
+        .photo:nth-child(6) { top: 25%; left: 50%; --rotate: 3deg; transform: translateX(-50%); width: 500px; height: 350px; }
+
+        /* Сердечки */
+        .heart {
+            position: fixed;
+            font-size: 20px;
+            color: rgba(255, 182, 217, 0.6);
+            animation: float-up 6s linear;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        @keyframes float-up {
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-1000px) rotate(360deg);
+            }
+        }
+
+        /* Заголовок */
+        .title {
+            text-align: center;
+            font-size: 4rem;
+            margin-bottom: 80px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #ffd9e8, #ffb6d9, #ffa6c1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 30px rgba(255, 182, 217, 0.4);
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 182, 217, 0.4)); }
+            50% { filter: drop-shadow(0 0 25px rgba(255, 182, 217, 0.7)); }
+        }
+
+        /* Адаптивность для планшетов */
+        @media (max-width: 1024px) {
+            .poem-line {
+                font-size: 1.8rem;
+                margin: 50px 0;
+            }
+            
+            .photo {
+                width: 150px;
+                height: 180px;
+            }
+        }
+
+        /* Адаптивность для телефонов */
+        @media (max-width: 768px) {
+            body {
+                background: linear-gradient(to bottom, #0a0e27 0%, #1a1a3e 50%, #0f0c29 100%);
+            }
+
+            .poem-container {
+                padding: 80px 25px;
+            }
+
+            .poem-line {
+                font-size: 1.4rem;
+                margin: 35px 0;
+                line-height: 1.6;
+            }
+            
+            .poem-line.dialogue {
+                font-size: 1.25rem;
+                margin: 30px 0;
+            }
+            
+            .poem-line.emphasis {
+                font-size: 1.6rem;
+            }
+            
+            .title {
+                font-size: 2.2rem;
+                margin-bottom: 60px;
+                letter-spacing: 2px;
+            }
+            
+            .photo {
+                width: 100px;
+                height: 130px;
+                font-size: 1.8rem;
+            }
+            
+            .photo:nth-child(1) { top: 12%; left: 5%; }
+            .photo:nth-child(2) { top: 30%; right: 5%; }
+            .photo:nth-child(3) { top: 50%; left: 8%; }
+            .photo:nth-child(4) { bottom: 25%; right: 5%; }
+            .photo:nth-child(5) { top: 70%; left: 5%; }
+            .photo:nth-child(6) { top: 22%; left: 50%; }
+            
+            .moon {
+                width: 70px;
+                height: 70px;
+                top: 8%;
+                right: 10%;
+            }
+
+            .heart {
+                font-size: 16px;
+            }
+        }
+
+        /* Адаптивность для маленьких телефонов */
+        @media (max-width: 480px) {
+            .poem-container {
+                padding: 60px 20px;
+            }
+
+            .poem-line {
+                font-size: 1.2rem;
+                margin: 30px 0;
+            }
+            
+            .poem-line.dialogue {
+                font-size: 1.1rem;
+                margin: 25px 0;
+            }
+            
+            .poem-line.emphasis {
+                font-size: 1.4rem;
+            }
+            
+            .title {
+                font-size: 1.8rem;
+                margin-bottom: 50px;
+                letter-spacing: 1.5px;
+            }
+            
+            .photo {
+                width: 80px;
+                height: 100px;
+                font-size: 1.5rem;
+            }
+            
+            .moon {
+                width: 60px;
+                height: 60px;
+            }
+
+            .star {
+                width: 1.5px;
+                height: 1.5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Звезды -->
+    <div class="stars" id="stars"></div>
+    
+    <!-- Луна -->
+    <div class="moon"></div>
+    
+    <!-- Плавающие фотографии -->
+    <div class="floating-photos">
+        <div class="photo">
+ <img src="./1.jpg" alt="Flowers in Chania"> 
+      </div>
+        <div class="photo">
+<img src="./2.jpg" alt="Flowers in Chania"> 
+      </div>
+        <div class="photo">
+ <img src="./3.jpg" alt="Flowers in Chania"> 
+      </div>
+        <div class="photo">
+ <img src="./4.jpg" alt="Flowers in Chania"> 
+      </div>
+        <div class="photo">
+ <img src="./5.jpg" alt="Flowers in Chania"> 
+      </div>
+        <div class="photo">
+ <img src="./6.png" alt="Flowers in Chania"> 
+      </div>
+    </div>
+    
+    <!-- Контейнер стихов -->
+    <div class="poem-container">
+        <h1 class="title">С 14 февраля <3</h1>
+        
+        <div class="poem-line">Я далеко, сижу и жду только нашей встречи</div>
+        <div class="poem-line">Ты далеко, лежишь в кровати и скучаешь</div>
+        <div class="poem-line">Ещё чуть-чуть, и кажется с ума сойдём мы вместе</div>
+        <div class="poem-line">Без встречи хоть бы раз за две недели</div>
+        
+        <div class="poem-line emphasis">Я отсчитываю дни, часы тянутся всё длинее</div>
+        <div class="poem-line emphasis">Любовь, моя любовь, когда же она приедет?</div>
+      <div class="chat">
+        <h1>Telegram</h1>
+        <div class="poem-line msg incoming">"Ю кэн тумороу в аэропорту мит ми?"</div>
+        <div class="poem-line msg outgoing">"Бегу уже, Жан я уже почти тут!"</div>
+        <div class="poem-line incoming">"Люблю тебя!"</div>
+        <div class="poem-line outgoing">"А я сильнее! Мы так давно не виделись"</div>
+        <div class="poem-line incoming">"Ю ноу ит вос две недели?"</div>
+        <div class="poem-line outgoing">"Да, но ощущалась будто вечность"</div>
+      </div>
+    </div>
+
+    <script>
+        // Создание звезд
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 150; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starsContainer.appendChild(star);
+        }
+
+        // Анимация строк при прокрутке
+        const poemLines = document.querySelectorAll('.poem-line');
+        const photos = document.querySelectorAll('.photo');
+        let currentPhotoIndex = 0;
+
+        function checkScroll() {
+            const triggerBottom = window.innerHeight * 1;
+            
+            poemLines.forEach((line, index) => {
+                const lineTop = line.getBoundingClientRect().top;
+                
+                if (lineTop < triggerBottom) {
+                    setTimeout(() => {
+                        line.classList.add('visible');
+                        
+                        // Показываем фотографии постепенно
+                        if (index % 2 === 0 && currentPhotoIndex < photos.length) {
+                            setTimeout(() => {
+                                photos[currentPhotoIndex].classList.add('show');
+                                currentPhotoIndex++;
+                            }, 300);
+                        }
+                    }, index * 100);
+                }
+            });
+        }
+
+        // Создание падающих сердечек
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.textContent = ['💕', '💖', '💗', '💝', '💓', '💞'][Math.floor(Math.random() * 6)];
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.bottom = '0';
+            document.body.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 6000);
+        }
+
+        // Запуск сердечек каждые 3 секунды
+        setInterval(createHeart, 3000);
+
+        // Проверка при загрузке и прокрутке
+        window.addEventListener('scroll', checkScroll);
+        window.addEventListener('load', checkScroll);
+        checkScroll();
+    </script>
+</body>
+</html>

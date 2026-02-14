@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Стих ✦</title>
+  <style>
+    :root{
+      --sky:#05060b;               /* тёмное небо */
+      --text:#f3f1ff;
+      --muted:rgba(243,241,255,.75);
+      --glass:rgba(255,255,255,.06);
+      --stroke:rgba(255,255,255,.12);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background: var(--sky);      /* без градиента */
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      overflow-x:hidden;
+    }
+
+    /* Звёзды (несколько слоёв) */
+    .stars, .stars2, .stars3{
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: .55;
+      background-image:
+        radial-gradient(rgba(255,255,255,.80) 1px, transparent 1px);
+      background-size: 120px 120px;
+      animation: starDrift 28s linear infinite;
+      transform: translateZ(0);
+    }
+    .stars2{
+      opacity:.35;
+      background-size: 220px 220px;
+      animation-duration: 48s;
+    }
+    .stars3{
+      opacity:.22;
+      background-size: 360px 360px;
+      animation-duration: 70s;
+    }
+    @keyframes starDrift{
+      from{ transform: translateY(0); }
+      to{ transform: translateY(-180px); }
+    }
+
+    /* Слой с фото "сзади" */
+    .stage{
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1; /* за текстом, но над звёздами */
+      overflow: hidden;
+    }
+    .photo{
+      position:absolute;
+      width: min(38vw, 360px);
+      aspect-ratio: 4/5;
+      border-radius: 20px;
+      overflow:hidden;
+
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 40px 120px rgba(0,0,0,.65);
+
+      opacity: 0;
+      transform: translate3d(0, 40px, 0) scale(.98);
+      filter: blur(10px);
+      transition:
+        opacity 600ms ease,
+        transform 700ms cubic-bezier(.2,.8,.2,1),
+        filter 700ms ease;
+    }
+    .photo.show{
+      opacity: .55; /* сзади, не мешает */
+      transform: translate3d(0, 0, 0) scale(1);
+      filter: blur(0);
+    }
+    .photo img{
+      width:100%; height:100%;
+      object-fit: cover;
+      display:block;
+      filter: saturate(1.05) contrast(1.03);
+      opacity: .95;
+    }
+    .photo::after{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.45));
+      pointer-events:none;
+    }
+
+    /* Текст поверх всего */
+    .wrap{
+      position: relative;
+      z-index: 2;
+      min-height: 230vh;
+      padding: 70px 18px 120px;
+      width: 100%;
+    }
+    header{
+      max-width: 1100px;
+      margin: 0 auto 18px;
+    }
+    h1{
+      margin:0 0 10px;
+      font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: -0.6px;
+      line-height:1.05;
+    }
+    .sub{
+      margin:0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Стих на всю страницу (без карточки) */
+    .poem{
+      max-width: 1100px;
+      margin: 26px auto 0;
+      padding: 0;
+    }
+
+    .line{
+      font-size: clamp(18px, 2.2vw, 24px);
+      line-height: 1.75;
+      padding: 10px 0;
+
+      /* анимация появления */
+      opacity: 0;
+      transform: translateY(18px);
+      filter: blur(10px);
+      transition:
+        opacity 700ms ease,
+        transform 700ms cubic-bezier(.2,.8,.2,1),
+        filter 700ms ease;
+      text-shadow: 0 6px 20px rgba(0,0,0,.55);
+    }
+    .line.reveal{
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    /* Лёгкий подсвет реплик */
+    .msg{
+      color: rgba(243,241,255,.94);
+      display: inline;
+      border-bottom: 1px solid rgba(255,255,255,.14);
+    }
+    .note{
+      color: rgba(243,241,255,.55);
+      font-size: .82em;
+      margin-left: 10px;
+      white-space: nowrap;
+    }
+    .hidden{
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="stars"></div>
+  <div class="stars2"></div>
+  <div class="stars3"></div>
+
+  <!-- Фото сзади -->
+  <div class="stage" id="stage" aria-hidden="true">
+    <div class="photo" data-index="2"  style="left:6%;  top:18%;"><img src="img/1.jpg" alt=""></div>
+    <div class="photo" data-index="5"  style="left:64%; top:14%;"><img src="img/2.jpg" alt=""></div>
+    <div class="photo" data-index="9"  style="left:14%; top:58%;"><img src="img/3.jpg" alt=""></div>
+    <div class="photo" data-index="12" style="left:62%; top:56%;"><img src="img/4.jpg" alt=""></div>
+  </div>
+
+  <div class="wrap">
+    <header>
+      <h1>Для тебя ✦</h1>
+      <p class="sub">Скролль вниз — строки появляются по одной, а фото мягко всплывают на фоне ночного неба.</p>
+    </header>
+
+    <section class="poem" id="poem"></section>
+  </div>
+
+  <script>
+    // 1) ВСТАВЬ СЮДА СВОЙ СТИХ ПО СТРОЧКАМ
+    const POEM_LINES = [
+      "Я далеко, сижу и жду только нашей встречи",
+      "Ты далеко, лежишь в кровати и скучаешь",
+      "Ещё чуть-чуть, и кажется с ума сойдём мы вместе",
+      "Без встречи - хотя бы раз за две недели",
+      "Я отсчитываю дни, часы тянутся всё длиннее",
+      "Любовь, моя любовь… когда же ты приедешь?",
+      "",
+      "\"You can tomorrow at the airport meet me?\"",
+      "\"Бегу уже, жан, я уже почти тут!\"",
+      "\"Люблю тебя!\" - \"А я сильнее! Мы так давно не виделись\"",
+      "\"You know it was two weeks?\" - \"Да, но ощущалось будто вечность\""
+    ];
+
+  </script>
+</body>
+</html>
+
