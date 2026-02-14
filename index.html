@@ -1,429 +1,545 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <title>Наша Встреча</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Crimson+Text:ital@0;1&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>Наша Встреча</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Crimson+Text:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 
-        body {
-            font-family: 'Cormorant Garamond', serif;
-            background: linear-gradient(to bottom, #0a0e27 0%, #1a1a3e 50%, #0f0c29 100%);
-            color: #fff;
-            overflow-x: hidden;
-            position: relative;
-            min-height: 70vh;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* Звездное небо */
-        .stars {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
+    body {
+      font-family: 'Cormorant Garamond', serif;
+      background: linear-gradient(to bottom, #0a0e27 0%, #1a1a3e 50%, #0f0c29 100%);
+      color: #fff;
+      overflow-x: hidden;
+      position: relative;
+      min-height: 70vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
 
-        .star {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: white;
-            border-radius: 50%;
-            animation: twinkle 3s infinite;
-        }
+    /* ========== LOGIN OVERLAY ========== */
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: radial-gradient(circle at 50% 30%, rgba(255,182,217,0.18), rgba(0,0,0,0.75));
+      backdrop-filter: blur(10px);
+    }
 
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
+    .auth-card {
+      width: min(520px, 100%);
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.20);
+      background: rgba(10, 14, 39, 0.55);
+      box-shadow: 0 25px 80px rgba(0,0,0,0.55);
+      padding: 26px 22px;
+      position: relative;
+      overflow: hidden;
+    }
 
-        /* Луна */
-        .moon {
-            position: fixed;
-            top: 10%;
-            right: 15%;
-            width: 120px;
-            height: 120px;
-            background: radial-gradient(circle at 30% 30%, #fffacd, #f0e68c);
-            border-radius: 50%;
-            box-shadow: 0 0 60px rgba(255, 250, 205, 0.5);
-            z-index: 1;
-            animation: moonFloat 8s ease-in-out infinite;
-        }
+    .auth-card::before {
+      content: "";
+      position: absolute;
+      inset: -80px -80px auto -80px;
+      height: 180px;
+      background: radial-gradient(circle at 50% 50%, rgba(255,182,217,0.35), transparent 60%);
+      filter: blur(10px);
+      pointer-events: none;
+    }
 
-        @keyframes moonFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
+    .auth-title {
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #ffd9e8, #ffb6d9, #ffa6c1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 4px 30px rgba(255, 182, 217, 0.25);
+      position: relative;
+      z-index: 1;
+    }
 
-        /* Контейнер для стихов */
-        .poem-container {
-            position: relative;
-            z-index: 10;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 100px 40px;
-            min-height: 100vh;
-        }
+    .auth-subtitle {
+      text-align: center;
+      font-family: 'Crimson Text', serif;
+      font-size: 1.05rem;
+      opacity: 0.85;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
 
-        .poem-line {
-            font-size: 2.2rem;
-            line-height: 1.8;
-            margin: 40px 0;
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            text-align: center;
-            font-weight: 300;
-            letter-spacing: 0.5px;
-            text-shadow: 0 2px 20px rgba(255, 255, 255, 0.3);
-        }
+    .auth-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+      position: relative;
+      z-index: 1;
+    }
 
-        .poem-line.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    .auth-input {
+      flex: 1;
+      padding: 14px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      outline: none;
+      font-size: 1.05rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .auth-input::placeholder { color: rgba(255,255,255,0.55); }
+    .auth-input:focus {
+      border-color: rgba(255,182,217,0.55);
+      box-shadow: 0 0 0 4px rgba(255,182,217,0.12);
+    }
 
-        .poem-line.dialogue {
-            font-style: italic;
-            color: #ffd9e8;
-            font-size: 1.9rem;
-            margin: 30px 0;
-        }
+    .auth-btn {
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.22);
+      background: linear-gradient(135deg, rgba(255,217,232,0.22), rgba(255,182,217,0.18));
+      color: #fff;
+      cursor: pointer;
+      font-size: 1.05rem;
+      transition: transform 0.12s ease, filter 0.2s ease;
+      white-space: nowrap;
+    }
+    .auth-btn:hover { filter: brightness(1.15); }
+    .auth-btn:active { transform: scale(0.98); }
 
-        .poem-line.emphasis {
-            font-size: 2.5rem;
-            color: #ffb6d9;
-            font-weight: 600;
-        }
+    .auth-hint {
+      margin-top: 10px;
+      text-align: center;
+      opacity: 0.7;
+      font-size: 0.98rem;
+      position: relative;
+      z-index: 1;
+    }
 
-        /* Плавающие фотографии */
-        .floating-photos {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 5;
-        }
-        
-        img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 10px;
-        }
+    .auth-error {
+      margin-top: 10px;
+      text-align: center;
+      color: #ffd9e8;
+      background: rgba(255, 90, 136, 0.10);
+      border: 1px solid rgba(255, 90, 136, 0.25);
+      padding: 10px 12px;
+      border-radius: 12px;
+      display: none;
+      position: relative;
+      z-index: 1;
+    }
 
-        .photo {
-            position: absolute;
-            width: 300px;
-            height: 500px;
-            background: linear-gradient(135deg, rgba(255, 182, 217, 0.2), rgba(255, 217, 232, 0.15));
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-            opacity: 0;
-            transform: scale(0.8) rotate(0deg);
-            transition: all 0.8s ease-out;
-            backdrop-filter: blur(5px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-        }
+    .auth-footer {
+      margin-top: 14px;
+      text-align: center;
+      opacity: 0.65;
+      font-size: 0.95rem;
+      position: relative;
+      z-index: 1;
+    }
 
-        .photo.show {
-            opacity: 1;
-            transform: scale(1) rotate(var(--rotate));
-        }
+    /* ========== MAIN PAGE (YOUR EXISTING) ========== */
 
-        .photo:nth-child(1) { top: 15%; left: 10%; --rotate: -5deg; }
-        .photo:nth-child(2) { top: 25%; right: 8%; --rotate: 8deg; }
-        .photo:nth-child(3) { top: 55%; left: 15%; --rotate: -7deg; }
-        .photo:nth-child(4) { bottom: 10%; right: 12%; --rotate: 6deg; }
-        .photo:nth-child(5) { top: 70%; left: 8%; --rotate: -4deg; }
-        .photo:nth-child(6) { top: 25%; left: 50%; --rotate: 3deg; transform: translateX(-50%); width: 500px; height: 350px; }
+    /* Звездное небо */
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
 
-        /* Сердечки */
-        .heart {
-            position: fixed;
-            font-size: 20px;
-            color: rgba(255, 182, 217, 0.6);
-            animation: float-up 6s linear;
-            pointer-events: none;
-            z-index: 3;
-        }
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 3s infinite;
+    }
 
-        @keyframes float-up {
-            0% {
-                opacity: 1;
-                transform: translateY(0) rotate(0deg);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-1000px) rotate(360deg);
-            }
-        }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
 
-        /* Заголовок */
-        .title {
-            text-align: center;
-            font-size: 4rem;
-            margin-bottom: 80px;
-            font-weight: 600;
-            letter-spacing: 3px;
-            background: linear-gradient(135deg, #ffd9e8, #ffb6d9, #ffa6c1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 4px 30px rgba(255, 182, 217, 0.4);
-            animation: titleGlow 3s ease-in-out infinite;
-        }
+    /* Луна */
+    .moon {
+      position: fixed;
+      top: 10%;
+      right: 15%;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle at 30% 30%, #fffacd, #f0e68c);
+      border-radius: 50%;
+      box-shadow: 0 0 60px rgba(255, 250, 205, 0.5);
+      z-index: 1;
+      animation: moonFloat 8s ease-in-out infinite;
+    }
 
-        @keyframes titleGlow {
-            0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 182, 217, 0.4)); }
-            50% { filter: drop-shadow(0 0 25px rgba(255, 182, 217, 0.7)); }
-        }
+    @keyframes moonFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
 
-        /* Адаптивность для планшетов */
-        @media (max-width: 1024px) {
-            .poem-line {
-                font-size: 1.8rem;
-                margin: 50px 0;
-            }
-            
-            .photo {
-                width: 150px;
-                height: 180px;
-            }
-        }
+    /* Контейнер для стихов */
+    .poem-container {
+      position: relative;
+      z-index: 10;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 100px 40px;
+      min-height: 100vh;
+    }
 
-        /* Адаптивность для телефонов */
-        @media (max-width: 768px) {
-            body {
-                background: linear-gradient(to bottom, #0a0e27 0%, #1a1a3e 50%, #0f0c29 100%);
-            }
+    .poem-line {
+      font-size: 2.2rem;
+      line-height: 1.8;
+      margin: 40px 0;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      text-align: center;
+      font-weight: 300;
+      letter-spacing: 0.5px;
+      text-shadow: 0 2px 20px rgba(255, 255, 255, 0.3);
+    }
 
-            .poem-container {
-                padding: 80px 25px;
-            }
+    .poem-line.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
-            .poem-line {
-                font-size: 1.4rem;
-                margin: 35px 0;
-                line-height: 1.6;
-            }
-            
-            .poem-line.dialogue {
-                font-size: 1.25rem;
-                margin: 30px 0;
-            }
-            
-            .poem-line.emphasis {
-                font-size: 1.6rem;
-            }
-            
-            .title {
-                font-size: 2.2rem;
-                margin-bottom: 60px;
-                letter-spacing: 2px;
-            }
-            
-            .photo {
-                width: 100px;
-                height: 130px;
-                font-size: 1.8rem;
-            }
-            
-            .photo:nth-child(1) { top: 12%; left: 5%; }
-            .photo:nth-child(2) { top: 30%; right: 5%; }
-            .photo:nth-child(3) { top: 50%; left: 8%; }
-            .photo:nth-child(4) { bottom: 25%; right: 5%; }
-            .photo:nth-child(5) { top: 70%; left: 5%; }
-            .photo:nth-child(6) { top: 22%; left: 50%; }
-            
-            .moon {
-                width: 70px;
-                height: 70px;
-                top: 8%;
-                right: 10%;
-            }
+    .poem-line.dialogue {
+      font-style: italic;
+      color: #ffd9e8;
+      font-size: 1.9rem;
+      margin: 30px 0;
+    }
 
-            .heart {
-                font-size: 16px;
-            }
-        }
+    .poem-line.emphasis {
+      font-size: 2.5rem;
+      color: #ffb6d9;
+      font-weight: 600;
+    }
 
-        /* Адаптивность для маленьких телефонов */
-        @media (max-width: 480px) {
-            .poem-container {
-                padding: 60px 20px;
-            }
+    /* Плавающие фотографии */
+    .floating-photos {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+    }
 
-            .poem-line {
-                font-size: 1.2rem;
-                margin: 30px 0;
-            }
-            
-            .poem-line.dialogue {
-                font-size: 1.1rem;
-                margin: 25px 0;
-            }
-            
-            .poem-line.emphasis {
-                font-size: 1.4rem;
-            }
-            
-            .title {
-                font-size: 1.8rem;
-                margin-bottom: 50px;
-                letter-spacing: 1.5px;
-            }
-            
-            .photo {
-                width: 80px;
-                height: 100px;
-                font-size: 1.5rem;
-            }
-            
-            .moon {
-                width: 60px;
-                height: 60px;
-            }
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+    }
 
-            .star {
-                width: 1.5px;
-                height: 1.5px;
-            }
-        }
-    </style>
+    .photo {
+      position: absolute;
+      width: 300px;
+      height: 500px;
+      background: linear-gradient(135deg, rgba(255, 182, 217, 0.2), rgba(255, 217, 232, 0.15));
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      transform: scale(0.8) rotate(0deg);
+      transition: all 0.8s ease-out;
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+    }
+
+    .photo.show {
+      opacity: 1;
+      transform: scale(1) rotate(var(--rotate));
+    }
+
+    .photo:nth-child(1) { top: 15%; left: 10%; --rotate: -5deg; }
+    .photo:nth-child(2) { top: 25%; right: 8%; --rotate: 8deg; }
+    .photo:nth-child(3) { top: 55%; left: 15%; --rotate: -7deg; }
+    .photo:nth-child(4) { bottom: 10%; right: 12%; --rotate: 6deg; }
+    .photo:nth-child(5) { top: 70%; left: 8%; --rotate: -4deg; }
+    .photo:nth-child(6) { top: 25%; left: 50%; --rotate: 3deg; transform: translateX(-50%); width: 500px; height: 350px; }
+
+    /* Сердечки */
+    .heart {
+      position: fixed;
+      font-size: 20px;
+      color: rgba(255, 182, 217, 0.6);
+      animation: float-up 6s linear;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    @keyframes float-up {
+      0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(-1000px) rotate(360deg); }
+    }
+
+    /* Заголовок */
+    .title {
+      text-align: center;
+      font-size: 4rem;
+      margin-bottom: 80px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      background: linear-gradient(135deg, #ffd9e8, #ffb6d9, #ffa6c1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 4px 30px rgba(255, 182, 217, 0.4);
+      animation: titleGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes titleGlow {
+      0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 182, 217, 0.4)); }
+      50% { filter: drop-shadow(0 0 25px rgba(255, 182, 217, 0.7)); }
+    }
+
+    /* Адаптивность */
+    @media (max-width: 1024px) {
+      .poem-line { font-size: 1.8rem; margin: 50px 0; }
+      .photo { width: 150px; height: 180px; }
+    }
+
+    @media (max-width: 768px) {
+      .poem-container { padding: 80px 25px; }
+      .poem-line { font-size: 1.4rem; margin: 35px 0; line-height: 1.6; }
+      .poem-line.dialogue { font-size: 1.25rem; margin: 30px 0; }
+      .poem-line.emphasis { font-size: 1.6rem; }
+      .title { font-size: 2.2rem; margin-bottom: 60px; letter-spacing: 2px; }
+      .photo { width: 100px; height: 130px; font-size: 1.8rem; }
+      .photo:nth-child(1) { top: 12%; left: 5%; }
+      .photo:nth-child(2) { top: 30%; right: 5%; }
+      .photo:nth-child(3) { top: 50%; left: 8%; }
+      .photo:nth-child(4) { bottom: 25%; right: 5%; }
+      .photo:nth-child(5) { top: 70%; left: 5%; }
+      .photo:nth-child(6) { top: 22%; left: 50%; }
+      .moon { width: 70px; height: 70px; top: 8%; right: 10%; }
+      .heart { font-size: 16px; }
+      .auth-title { font-size: 1.9rem; }
+    }
+
+    @media (max-width: 480px) {
+      .poem-container { padding: 60px 20px; }
+      .poem-line { font-size: 1.2rem; margin: 30px 0; }
+      .poem-line.dialogue { font-size: 1.1rem; margin: 25px 0; }
+      .poem-line.emphasis { font-size: 1.4rem; }
+      .title { font-size: 1.8rem; margin-bottom: 50px; letter-spacing: 1.5px; }
+      .photo { width: 80px; height: 100px; font-size: 1.5rem; }
+      .moon { width: 60px; height: 60px; }
+      .star { width: 1.5px; height: 1.5px; }
+      .auth-title { font-size: 1.7rem; }
+    }
+
+    /* Optional: hide main content until login */
+    .app.hidden { display: none; }
+  </style>
 </head>
+
 <body>
+  <!-- LOGIN -->
+  <div class="auth-overlay" id="authOverlay" aria-modal="true" role="dialog">
+    <div class="auth-card">
+      <div class="auth-title">Только для тебя</div>
+      <div class="auth-subtitle">Введи секретное слово, чтобы открыть страницу</div>
+
+      <div class="auth-row">
+        <input
+          id="authInput"
+          class="auth-input"
+          type="password"
+          inputmode="text"
+          autocomplete="off"
+          placeholder="Секретное слово"
+        />
+        <button id="authBtn" class="auth-btn">Открыть</button>
+      </div>
+
+      <div id="authError" class="auth-error">Неверно. Попробуй ещё раз 💗</div>
+      <div class="auth-hint">Подсказка: можно поставить дату, имя или вашу фразу</div>
+      <div class="auth-footer">🫶</div>
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div class="app hidden" id="app">
     <!-- Звезды -->
     <div class="stars" id="stars"></div>
-    
+
     <!-- Луна -->
     <div class="moon"></div>
-    
+
     <!-- Плавающие фотографии -->
     <div class="floating-photos">
-        <div class="photo">
- <img src="./1.jpg" alt="Flowers in Chania"> 
-      </div>
-        <div class="photo">
-<img src="./2.jpg" alt="Flowers in Chania"> 
-      </div>
-        <div class="photo">
- <img src="./3.jpg" alt="Flowers in Chania"> 
-      </div>
-        <div class="photo">
- <img src="./4.jpg" alt="Flowers in Chania"> 
-      </div>
-        <div class="photo">
- <img src="./5.jpg" alt="Flowers in Chania"> 
-      </div>
-        <div class="photo">
- <img src="./6.png" alt="Flowers in Chania"> 
-      </div>
+      <div class="photo"><img src="./1.jpg" alt="Photo 1"></div>
+      <div class="photo"><img src="./2.jpg" alt="Photo 2"></div>
+      <div class="photo"><img src="./3.jpg" alt="Photo 3"></div>
+      <div class="photo"><img src="./4.jpg" alt="Photo 4"></div>
+      <div class="photo"><img src="./5.jpg" alt="Photo 5"></div>
+      <div class="photo"><img src="./6.png" alt="Photo 6"></div>
     </div>
-    
+
     <!-- Контейнер стихов -->
     <div class="poem-container">
-        <h1 class="title">С 14 февраля <3</h1>
-        
-        <div class="poem-line">Я далеко, сижу и жду только нашей встречи</div>
-        <div class="poem-line">Ты далеко, лежишь в кровати и скучаешь</div>
-        <div class="poem-line">Ещё чуть-чуть, и кажется с ума сойдём мы вместе</div>
-        <div class="poem-line">Без встречи хоть бы раз за две недели</div>
-        
-        <div class="poem-line emphasis">Я отсчитываю дни, часы тянутся всё длинее</div>
-        <div class="poem-line emphasis">Любовь, моя любовь, когда же она приедет?</div>
+      <h1 class="title">С 14 февраля &lt;3</h1>
+
+      <div class="poem-line">Я далеко, сижу и жду только нашей встречи</div>
+      <div class="poem-line">Ты далеко, лежишь в кровати и скучаешь</div>
+      <div class="poem-line">Ещё чуть-чуть, и кажется с ума сойдём мы вместе</div>
+      <div class="poem-line">Без встречи хоть бы раз за две недели</div>
+
+      <div class="poem-line emphasis">Я отсчитываю дни, часы тянутся всё длинее</div>
+      <div class="poem-line emphasis">Любовь, моя любовь, когда же она приедет?</div>
+
       <div class="chat">
         <h1>Telegram</h1>
         <div class="poem-line msg incoming">"Ю кэн тумороу в аэропорту мит ми?"</div>
         <div class="poem-line msg outgoing">"Бегу уже, Жан я уже почти тут!"</div>
-        <div class="poem-line incoming">"Люблю тебя!"</div>
-        <div class="poem-line outgoing">"А я сильнее! Мы так давно не виделись"</div>
-        <div class="poem-line incoming">"Ю ноу ит вос две недели?"</div>
-        <div class="poem-line outgoing">"Да, но ощущалась будто вечность"</div>
+        <div class="poem-line msg incoming">"Люблю тебя!"</div>
+        <div class="poem-line msg outgoing">"А я сильнее! Мы так давно не виделись"</div>
+        <div class="poem-line msg incoming">"Ю ноу ит вос две недели?"</div>
+        <div class="poem-line msg outgoing">"Да, но ощущалась будто вечность"</div>
       </div>
     </div>
+  </div>
 
-    <script>
-        // Создание звезд
-        const starsContainer = document.getElementById('stars');
-        for (let i = 0; i < 150; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.animationDelay = Math.random() * 3 + 's';
-            starsContainer.appendChild(star);
-        }
+  <script>
+    // ========== SIMPLE LOGIN ==========
+    // Change this secret:
+    const SECRET = "090825"; // <- put your password here
 
-        // Анимация строк при прокрутке
-        const poemLines = document.querySelectorAll('.poem-line');
-        const photos = document.querySelectorAll('.photo');
-        let currentPhotoIndex = 0;
+    const authOverlay = document.getElementById("authOverlay");
+    const authInput = document.getElementById("authInput");
+    const authBtn = document.getElementById("authBtn");
+    const authError = document.getElementById("authError");
+    const app = document.getElementById("app");
 
-        function checkScroll() {
-            const triggerBottom = window.innerHeight * 1;
-            
-            poemLines.forEach((line, index) => {
-                const lineTop = line.getBoundingClientRect().top;
-                
-                if (lineTop < triggerBottom) {
-                    setTimeout(() => {
-                        line.classList.add('visible');
-                        
-                        // Показываем фотографии постепенно
-                        if (index % 2 === 0 && currentPhotoIndex < photos.length) {
-                            setTimeout(() => {
-                                photos[currentPhotoIndex].classList.add('show');
-                                currentPhotoIndex++;
-                            }, 300);
-                        }
-                    }, index * 100);
-                }
-            });
-        }
-
-        // Создание падающих сердечек
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.className = 'heart';
-            heart.textContent = ['💕', '💖', '💗', '💝', '💓', '💞'][Math.floor(Math.random() * 6)];
-            heart.style.left = Math.random() * 100 + '%';
-            heart.style.bottom = '0';
-            document.body.appendChild(heart);
-            
-            setTimeout(() => {
-                heart.remove();
-            }, 6000);
-        }
-
-        // Запуск сердечек каждые 3 секунды
-        setInterval(createHeart, 3000);
-
-        // Проверка при загрузке и прокрутке
-        window.addEventListener('scroll', checkScroll);
-        window.addEventListener('load', checkScroll);
+    function unlock() {
+      const value = (authInput.value || "").trim();
+      if (value === SECRET) {
+        authError.style.display = "none";
+        authOverlay.style.display = "none";
+        app.classList.remove("hidden");
+        // Start/check animations after unlock
         checkScroll();
-    </script>
+      } else {
+        authError.style.display = "block";
+        authInput.focus();
+        authInput.select?.();
+      }
+    }
+
+    authBtn.addEventListener("click", unlock);
+    authInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") unlock();
+    });
+
+    // Optional: keep user logged in on this device
+    // Uncomment to enable:
+    // function unlock() {
+    //   const value = (authInput.value || "").trim();
+    //   if (value === SECRET) {
+    //     localStorage.setItem("unlocked", "1");
+    //     authError.style.display = "none";
+    //     authOverlay.style.display = "none";
+    //     app.classList.remove("hidden");
+    //     checkScroll();
+    //   } else {
+    //     authError.style.display = "block";
+    //     authInput.focus();
+    //   }
+    // }
+    // if (localStorage.getItem("unlocked") === "1") {
+    //   authOverlay.style.display = "none";
+    //   app.classList.remove("hidden");
+    // }
+
+    // ========== STARS ==========
+    const starsContainer = document.getElementById('stars');
+    for (let i = 0; i < 150; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.animationDelay = Math.random() * 3 + 's';
+      starsContainer.appendChild(star);
+    }
+
+    // ========== SCROLL ANIMATION ==========
+    const poemLines = document.querySelectorAll('.poem-line');
+    const photos = document.querySelectorAll('.photo');
+    let currentPhotoIndex = 0;
+
+    function checkScroll() {
+      const triggerBottom = window.innerHeight * 1;
+      poemLines.forEach((line, index) => {
+        const lineTop = line.getBoundingClientRect().top;
+        if (lineTop < triggerBottom) {
+          setTimeout(() => {
+            line.classList.add('visible');
+            if (index % 2 === 0 && currentPhotoIndex < photos.length) {
+              setTimeout(() => {
+                photos[currentPhotoIndex].classList.add('show');
+                currentPhotoIndex++;
+              }, 300);
+            }
+          }, index * 100);
+        }
+      });
+    }
+
+    // ========== HEARTS ==========
+    function createHeart() {
+      // Only spawn hearts after unlock
+      if (app.classList.contains("hidden")) return;
+
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.textContent = ['💕', '💖', '💗', '💝', '💓', '💞'][Math.floor(Math.random() * 6)];
+      heart.style.left = Math.random() * 100 + '%';
+      heart.style.bottom = '0';
+      document.body.appendChild(heart);
+
+      setTimeout(() => heart.remove(), 6000);
+    }
+
+    setInterval(createHeart, 3000);
+
+    window.addEventListener('scroll', () => {
+      if (!app.classList.contains("hidden")) checkScroll();
+    });
+
+    window.addEventListener('load', () => {
+      // keep main hidden until unlock
+      // (stars still exist but app content stays hidden)
+    });
+  </script>
 </body>
 </html>
